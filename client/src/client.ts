@@ -1,1 +1,0 @@
-/// <reference path="https://github.com/pixijs/pixi-typescript/blob/v4.x/pixi.js.d.ts" />
