@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "ES2017"
+    },
+    "files": [
+        "./node_modules/pixi-typescript/pixi.js.d.ts",
+        "./src/index.ts"
+    ]
+}
