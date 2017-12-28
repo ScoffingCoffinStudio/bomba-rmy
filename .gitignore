@@ -1,10 +1,10 @@
 # Typescript
 
-/client/*.html
+
 /client/*.js
 /client/node_modules
 /client/package-lock.json
-/client/src/*.js
+
 /client/src/*.js.map
 
 # Rust

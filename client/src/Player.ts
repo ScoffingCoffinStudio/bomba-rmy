@@ -1,14 +1,21 @@
 export class Player {
-    
-        //public arrayBlock: Block[][];
-        public arrayPlayer: number[][];
-        constructor() {
-            // this.arrayBlock = [];
-            for (var i: number = 0; i < 3; i++) {
-                // this.arrayBlock[i] = [200+(i*50)];
-                for (var j: number = 0; j < 3; j++) {
-                    this.arrayPlayer[i][j] = [50 + (i * 50)][200 + (i * 50)];
-                }
-            }
-        }
+
+    private _sprite: PIXI.Sprite;
+   
+
+    constructor(x: number, y: number) {
+        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('player.png'));
+        this._sprite.position.x = x;
+        this._sprite.position.y = y;
+      
+
     }
+    //#region GETTER-SETTER
+    get sprite(): PIXI.Sprite {
+        return this._sprite;
+    }
+
+    set sprite(spriteSet: PIXI.Sprite) {
+        this._sprite = spriteSet;
+    }
+}

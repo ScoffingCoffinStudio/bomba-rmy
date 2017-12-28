@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { LayerTile } from "./LayerTile";
-
+import { LayerDynamicItem } from "./LayerDynamicItem";
 
 var renderer = PIXI.autoDetectRenderer(800, 600, {backgroundColor: 0x1099bb});
 document.body.appendChild(renderer.view);
@@ -8,17 +8,10 @@ document.body.appendChild(renderer.view);
  var stageGame = new PIXI.Container();
  
  var layerTile =  new LayerTile();
- var stage = layerTile.load(stageGame);
-
-// var texture = PIXI.Texture.fromImage('bunny.png');
-// var bunny = new PIXI.Sprite(texture);
-// bunny.anchor.x = 0.5;
-// bunny.anchor.y = 0.5;
-// bunny.position.x = 400;
-// bunny.position.y = 300;
-// bunny.scale.x = 2;
-// bunny.scale.y = 2;
-//  stage.addChild(bunny);
+ layerTile.load(stageGame);
+ 
+ var layerDynamicItem = new LayerDynamicItem();
+ layerDynamicItem.load(stageGame);
 
 animate();
 
@@ -27,5 +20,6 @@ function animate() {
     requestAnimationFrame(animate);
    // var bunny = stage.getChildAt(0);
    // bunny.rotation += 0.01;
-    renderer.render(stage);
+    renderer.render(stageGame);
+  //  renderer.render(stage);
 }
