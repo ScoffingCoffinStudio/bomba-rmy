@@ -2,12 +2,13 @@ export class Player {
 
     private _sprite: PIXI.Sprite;
    
-
+    
     constructor(x: number, y: number) {
         this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('player.png'));
-        this._sprite.position.x = x;
-        this._sprite.position.y = y;
-      
+        // this._sprite.position.x = x;
+        // this._sprite.position.y = y;
+        this._sprite.x = x;
+        this._sprite.y = y;
 
     }
     //#region GETTER-SETTER
@@ -18,4 +19,5 @@ export class Player {
     set sprite(spriteSet: PIXI.Sprite) {
         this._sprite = spriteSet;
     }
+    //#endregion
 }
