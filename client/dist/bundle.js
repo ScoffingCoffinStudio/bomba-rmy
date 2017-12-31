@@ -471,7 +471,7 @@ exports.__esModule = true;
  * @name VERSION
  * @type {string}
  */
-var VERSION = exports.VERSION = '4.6.1';
+var VERSION = exports.VERSION = '4.6.2';
 
 /**
  * Two Pi.
@@ -6056,8 +6056,8 @@ var WebGLRenderer = function (_SystemRenderer) {
     WebGLRenderer.prototype.reset = function reset() {
         this.setObjectRenderer(this.emptyRenderer);
 
+        this.bindVao(null);
         this._activeShader = null;
-        this._activeVao = null;
         this._activeRenderTarget = this.rootRenderTarget;
 
         for (var i = 0; i < this.boundTextures.length; i++) {
@@ -15167,17 +15167,19 @@ var SystemRenderer = function (_EventEmitter) {
    * @param {PIXI.DisplayObject} displayObject - The displayObject the object will be generated from
    * @param {number} scaleMode - Should be one of the scaleMode consts
    * @param {number} resolution - The resolution / device pixel ratio of the texture being generated
+   * @param {PIXI.Rectangle} [region] - The region of the displayObject, that shall be rendered,
+   *        if no region is specified, defaults to the local bounds of the displayObject.
    * @return {PIXI.Texture} a texture of the graphics object
    */
 
 
-  SystemRenderer.prototype.generateTexture = function generateTexture(displayObject, scaleMode, resolution) {
-    var bounds = displayObject.getLocalBounds();
+  SystemRenderer.prototype.generateTexture = function generateTexture(displayObject, scaleMode, resolution, region) {
+    region = region || displayObject.getLocalBounds();
 
-    var renderTexture = _RenderTexture2.default.create(bounds.width | 0, bounds.height | 0, scaleMode, resolution);
+    var renderTexture = _RenderTexture2.default.create(region.width | 0, region.height | 0, scaleMode, resolution);
 
-    tempMatrix.tx = -bounds.x;
-    tempMatrix.ty = -bounds.y;
+    tempMatrix.tx = -region.x;
+    tempMatrix.ty = -region.y;
 
     this.render(displayObject, renderTexture, false, tempMatrix, true);
 
@@ -20603,28 +20605,105 @@ layerDynamicItem.load(stageGame);
 layerDynamicItem.arrayPlayer[1].sprite.position.y = 300;
 animate();
 //LOAD KEYBOARD LISTENER 
-document.addEventListener('keydown', keyboardInput);
+//document.addEventListener('keydown', keyboardInput);
+// faire un truc plus prore
+class KeyboardState {
+    constructor(keycode) {
+        this.keycode = keycode;
+        this.isDown = false;
+        this.isUp = true;
+        this.press = function () { };
+        this.release = function () { };
+        this.downHandler = event => {
+            if (event.keyCode === this.keycode) {
+                if (this.isUp && this.press)
+                    this.press();
+                this.isDown = true;
+                this.isUp = false;
+            }
+            event.preventDefault();
+        };
+        this.upHandler = event => {
+            if (event.keyCode === this.keycode) {
+                if (this.isDown && this.release)
+                    this.release();
+                this.isDown = false;
+                this.isUp = true;
+            }
+            event.preventDefault();
+        };
+        //Attach event listeners
+        window.addEventListener("keydown", this.downHandler.bind(this), false);
+        window.addEventListener("keyup", this.upHandler.bind(this), false);
+    }
+}
+exports.KeyboardState = KeyboardState;
+let left = new KeyboardState(37), up = new KeyboardState(38), right = new KeyboardState(39), down = new KeyboardState(40);
+right.press = () => {
+    layerDynamicItem.arrayPlayer[1].velocityX = 2;
+    layerDynamicItem.arrayPlayer[1].velocityY = 0;
+};
+right.release = () => {
+    if (!left.isDown && layerDynamicItem.arrayPlayer[1].velocityY === 0) {
+        layerDynamicItem.arrayPlayer[1].velocityX = 0;
+    }
+};
+left.press = () => {
+    layerDynamicItem.arrayPlayer[1].velocityX = -2;
+    layerDynamicItem.arrayPlayer[1].velocityY = 0;
+};
+left.release = () => {
+    if (!right.isDown && layerDynamicItem.arrayPlayer[1].velocityY === 0) {
+        layerDynamicItem.arrayPlayer[1].velocityX = 0;
+    }
+};
+up.press = () => {
+    layerDynamicItem.arrayPlayer[1].velocityX = 0;
+    layerDynamicItem.arrayPlayer[1].velocityY = -2;
+};
+up.release = () => {
+    if (!down.isDown && layerDynamicItem.arrayPlayer[1].velocityX === 0) {
+        layerDynamicItem.arrayPlayer[1].velocityY = 0;
+    }
+};
+down.press = () => {
+    layerDynamicItem.arrayPlayer[1].velocityX = 0;
+    layerDynamicItem.arrayPlayer[1].velocityY = 2;
+};
+down.release = () => {
+    if (!up.isDown && layerDynamicItem.arrayPlayer[1].velocityX === 0) {
+        layerDynamicItem.arrayPlayer[1].velocityY = 0;
+    }
+};
 function animate() {
     requestAnimationFrame(animate);
     // var bunny = stage.getChildAt(0);
+    layerDynamicItem.arrayPlayer[1].animate();
     renderer.render(stageGame);
     //renderer.render(stage);
 }
-function keyboardInput(event) {
-    // PRESS LEFT ARROW OR 'A' KEY
-    if (event.keyCode == 37 || event.keyCode == 65) {
-        layerDynamicItem.arrayPlayer[1].sprite.x = 50;
-    }
-    else if (event.keyCode == 38 || event.keyCode == 87) {
-        layerDynamicItem.arrayPlayer[1].sprite.y -= 10;
-    }
-    else if (event.keyCode == 39 || event.keyCode == 68) {
-        layerDynamicItem.arrayPlayer[1].sprite.x += 10;
-    }
-    else if (event.keyCode == 40 || event.keyCode == 83) {
-        layerDynamicItem.arrayPlayer[1].sprite.y += 10;
-    }
-}
+/*
+function keyboardInput(event: KeyboardEvent) {
+  // PRESS LEFT ARROW OR 'A' KEY
+  if (event.keyCode == 37 || event.keyCode == 65) {
+    layerDynamicItem.arrayPlayer[1].sprite.x =  50;
+  }
+  // PRESS UP ARROW OR 'W' KEY
+  else if (event.keyCode == 38 || event.keyCode == 87) {
+    layerDynamicItem.arrayPlayer[1].sprite.y -= 10;
+ 
+  }
+  // PRESS RIGHT ARROW OR 'D' KEY
+  else if (event.keyCode == 39 || event.keyCode == 68) {
+    layerDynamicItem.arrayPlayer[1].sprite.x += 10;
+    
+  }
+  // PRESS DOWN ARROW OR 'S' KEY
+  else if (event.keyCode == 40 || event.keyCode == 83) {
+    layerDynamicItem.arrayPlayer[1].sprite.y += 10;
+    
+  }
+}*/
 
 
 /***/ }),
@@ -23075,9 +23154,9 @@ function mapPremultipliedBlendModes() {
 	if (
 		true
 	) {
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
 			return punycode;
-		}.call(exports, __webpack_require__, exports, module),
+		}).call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	} else if (freeExports && freeModule) {
 		if (module.exports == freeExports) {
@@ -36856,7 +36935,6 @@ var InteractionManager = function (_EventEmitter) {
      *
      * @param {HTMLCanvasElement} element - the DOM element which will receive mouse and touch events.
      * @param {number} [resolution=1] - The resolution / device pixel ratio of the new element (relative to the canvas).
-     * @private
      */
 
 
@@ -40125,9 +40203,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * The ParticleContainer class is a really fast version of the Container built solely for speed,
- * so use when you need a lot of sprites or particles. The tradeoff of the ParticleContainer is that advanced
- * functionality will not work. ParticleContainer implements only the basic object transform (position, scale, rotation).
- * Any other functionality like tinting, masking, etc will not work on sprites in this batch.
+ * so use when you need a lot of sprites or particles. The tradeoff of the ParticleContainer is that most advanced
+ * functionality will not work. ParticleContainer implements the basic object transform (position, scale, rotation)
+ * and some advanced functionality like tint (as of v4.5.6).
+ * Other more advanced functionality like masking, children, filters, etc will not work on sprites in this batch.
  *
  * It's extremely easy to use :
  *
@@ -41764,6 +41843,8 @@ class Player {
         // this._sprite.position.y = y;
         this._sprite.x = x;
         this._sprite.y = y;
+        this.velocityX = 0;
+        this.velocityY = 0;
     }
     //#region GETTER-SETTER
     get sprite() {
@@ -41771,6 +41852,10 @@ class Player {
     }
     set sprite(spriteSet) {
         this._sprite = spriteSet;
+    }
+    animate() {
+        this._sprite.x += this.velocityX;
+        this._sprite.y += this.velocityY;
     }
 }
 exports.Player = Player;
