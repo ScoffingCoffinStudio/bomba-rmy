@@ -1,15 +1,8 @@
 import * as PIXIS from 'pixi.js';
-import * as PIXITIME from 'pixi-timer';
-//import TimerPlugin from 'pixi-timer';
-//import * as BUMP from './bump';
-//import { Bump } from "./bump";
 import { LayerTile } from "./LayerTile";
 import { LayerDynamicItem } from "./LayerDynamicItem";
 import { Player } from './Player';
 import { Bump } from './bump.js';
-import { Timer } from 'pixi-timer';
-
-
 
 var bump = new Bump(PIXI);
 
@@ -25,25 +18,7 @@ var layerDynamicItem = new LayerDynamicItem();
 layerDynamicItem.load(stageGame);
 layerDynamicItem.arrayPlayer[1].sprite.position.y = 300;
 
-
 animate();
-
-// class Test {
-//   public example = 'Test';
-//   private timer:any;
-
-//   withFatArrow() {
-//       this.timer = setTimeout(() => alert(this.example), 500);
-//   }
-
-//   withoutFatArrow() {
-//       this.timer = setTimeout(function() { alert(this.example) }, 500);
-//   }
-// }
-
-// var test = new Test();
-// //test.withFatArrow();
-// test.withoutFatArrow();
 
 //LOAD KEYBOARD LISTENER 
 // faire un truc plus prore
@@ -62,7 +37,7 @@ export class KeyboardState {
     this.isDown = false;
     this.isUp = true;
     this.press = function () { };
-    this.release = function ()  { };
+    this.release = function () { };
 
     this.downHandler = event => {
       if (event.keyCode === this.keycode) {
@@ -143,37 +118,16 @@ down.release = () => {
 };
 
 showBomb.press = () => {
-  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bombe-bien.png'));
+  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bomb.png'));
 
   bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
   bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
 
   stageGame.addChild(bomb);
-  destroyBomb(bomb);
+  layerDynamicItem.destroyBomb(stageGame, bomb);
 }
 
 
-function destroyBomb(bomb: any) {
-
- 
-  setTimeout(function () { 
-  
-    var explosion = new PIXI.Sprite(PIXI.Texture.fromImage('flammetest.png'));
-  explosion.x = bomb.x +50;
-  explosion.y = bomb.y;
-  stageGame.addChild(explosion);
-  
-  bomb.destroy(); 
-  destroyExplosion(explosion);
-  }, 2000);
-
-  
-}
-
-
-function destroyExplosion(explosion:any){
-  setTimeout(function () {explosion.destroy() },100);
-}
 
 function animate() {
 

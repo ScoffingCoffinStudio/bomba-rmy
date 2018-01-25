@@ -84,12 +84,9 @@ var Material;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-//import TimerPlugin from 'pixi-timer';
-//import * as BUMP from './bump';
-//import { Bump } from "./bump";
 const LayerTile_1 = __webpack_require__(2);
 const LayerDynamicItem_1 = __webpack_require__(5);
-const bump_js_1 = __webpack_require__(7);
+const bump_js_1 = __webpack_require__(8);
 var bump = new bump_js_1.Bump(PIXI);
 var renderer = PIXI.autoDetectRenderer(500, 500, { backgroundColor: 0x1099bb });
 document.body.appendChild(renderer.view);
@@ -100,19 +97,6 @@ var layerDynamicItem = new LayerDynamicItem_1.LayerDynamicItem();
 layerDynamicItem.load(stageGame);
 layerDynamicItem.arrayPlayer[1].sprite.position.y = 300;
 animate();
-// class Test {
-//   public example = 'Test';
-//   private timer:any;
-//   withFatArrow() {
-//       this.timer = setTimeout(() => alert(this.example), 500);
-//   }
-//   withoutFatArrow() {
-//       this.timer = setTimeout(function() { alert(this.example) }, 500);
-//   }
-// }
-// var test = new Test();
-// //test.withFatArrow();
-// test.withoutFatArrow();
 //LOAD KEYBOARD LISTENER 
 // faire un truc plus prore
 class KeyboardState {
@@ -184,25 +168,12 @@ down.release = () => {
     }
 };
 showBomb.press = () => {
-    let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bombe-bien.png'));
+    let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bomb.png'));
     bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
     bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
     stageGame.addChild(bomb);
-    destroyBomb(bomb);
+    layerDynamicItem.destroyBomb(stageGame, bomb);
 };
-function destroyBomb(bomb) {
-    setTimeout(function () {
-        var explosion = new PIXI.Sprite(PIXI.Texture.fromImage('flammetest.png'));
-        explosion.x = bomb.x + 50;
-        explosion.y = bomb.y;
-        stageGame.addChild(explosion);
-        bomb.destroy();
-        destroyExplosion(explosion);
-    }, 2000);
-}
-function destroyExplosion(explosion) {
-    setTimeout(function () { explosion.destroy(); }, 100);
-}
 function animate() {
     requestAnimationFrame(animate);
     // var bunny = stage.getChildAt(0);
@@ -342,15 +313,53 @@ exports.Background = Background;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Player_1 = __webpack_require__(6);
+const Explosion_1 = __webpack_require__(7);
 class LayerDynamicItem {
     constructor() {
         this.arrayPlayer = [];
+        this.arrayExplosion = [];
     }
     load(stageLayer) {
         let player = new Player_1.Player(55, 10);
         stageLayer.addChild(player.sprite);
         this.arrayPlayer[1] = player;
         return stageLayer;
+    }
+    destroyBomb(stageLayer, bomb) {
+        setTimeout(function () {
+            for (let x = 0; x < 4; x++) {
+                this.arrayExplosion[x] = [];
+                for (let y = 0; y < 4; y++) {
+                    switch (y) {
+                        case 0:
+                            let explosion1 = new Explosion_1.Explosion(1, 2, "vertical");
+                            // this.arrayExplosion[x][y] = explosion1;
+                            // stageLayer.addChild(explosion1.sprite);
+                            break;
+                        // case 1:
+                        //  explosion = new Explosion(bomb.x, bomb.y+50, "vertical");
+                        // this.arrayExplosion[x][y] = explosion;
+                        // stageLayer.addChild(explosion.sprite);
+                        //     break;
+                        // case 2:
+                        // explosion = new Explosion(bomb.x-200, bomb.y, "horizontal");
+                        // this.arrayExplosion[x][y] = explosion;
+                        // stageLayer.addChild(explosion.sprite);
+                        //     break;
+                        // case 3:
+                        // explosion = new Explosion(bomb.x+50, bomb.y, "horizontal");
+                        // this.arrayExplosion[x][y] = explosion;
+                        // stageLayer.addChild(explosion.sprite);
+                        //     break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            bomb.destroy();
+            // explosion.sprite.destroy()
+            // setTimeout(function () {for (let i = 0; i < 4; i++) {this.arrayExplosion[i].destroy;}}, 100);
+        }, 2000);
     }
 }
 exports.LayerDynamicItem = LayerDynamicItem;
@@ -390,6 +399,40 @@ exports.Player = Player;
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Material_1 = __webpack_require__(0);
+class Explosion {
+    constructor(x, y, position) {
+        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('explosion.png'));
+        // if(position == "vertical"){
+        //     this._sprite.rotation=Math.PI/2;
+        // }
+        this._sprite.position.x = x;
+        this._sprite.position.y = y;
+        this._material = Material_1.Material.Destructible;
+    }
+    get sprite() {
+        return this._sprite;
+    }
+    set sprite(value) {
+        this._sprite = value;
+    }
+    get material() {
+        return this._material;
+    }
+    set material(value) {
+        this._material = value;
+    }
+}
+exports.Explosion = Explosion;
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
