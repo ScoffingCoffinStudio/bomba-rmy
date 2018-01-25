@@ -1,9 +1,17 @@
-import * as PIXI from 'pixi.js';
+import * as PIXIS from 'pixi.js';
+import * as PIXITIME from 'pixi-timer';
+//import TimerPlugin from 'pixi-timer';
+//import * as BUMP from './bump';
+//import { Bump } from "./bump";
 import { LayerTile } from "./LayerTile";
 import { LayerDynamicItem } from "./LayerDynamicItem";
 import { Player } from './Player';
+import { Bump } from './bump.js';
+import { Timer } from 'pixi-timer';
 
 
+
+var bump = new Bump(PIXI);
 
 var renderer = PIXI.autoDetectRenderer(500, 500, { backgroundColor: 0x1099bb });
 document.body.appendChild(renderer.view);
@@ -20,10 +28,24 @@ layerDynamicItem.arrayPlayer[1].sprite.position.y = 300;
 
 animate();
 
+// class Test {
+//   public example = 'Test';
+//   private timer:any;
+
+//   withFatArrow() {
+//       this.timer = setTimeout(() => alert(this.example), 500);
+//   }
+
+//   withoutFatArrow() {
+//       this.timer = setTimeout(function() { alert(this.example) }, 500);
+//   }
+// }
+
+// var test = new Test();
+// //test.withFatArrow();
+// test.withoutFatArrow();
 
 //LOAD KEYBOARD LISTENER 
-//document.addEventListener('keydown', keyboardInput);
-
 // faire un truc plus prore
 export class KeyboardState {
   public keycode: number;
@@ -39,8 +61,8 @@ export class KeyboardState {
     this.keycode = keycode;
     this.isDown = false;
     this.isUp = true;
-    this.press = function() { };
-    this.release = function() { };
+    this.press = function () { };
+    this.release = function ()  { };
 
     this.downHandler = event => {
       if (event.keyCode === this.keycode) {
@@ -60,7 +82,7 @@ export class KeyboardState {
       event.preventDefault();
     };
 
-      //Attach event listeners
+    //Attach event listeners
     window.addEventListener(
       "keydown", this.downHandler.bind(this), false
     );
@@ -71,13 +93,13 @@ export class KeyboardState {
 }
 
 let left = new KeyboardState(37),
-    up = new KeyboardState(38),
-    right = new KeyboardState(39),
-    down = new KeyboardState(40);
-
+  up = new KeyboardState(38),
+  right = new KeyboardState(39),
+  down = new KeyboardState(40),
+  showBomb = new KeyboardState(32);
 
 right.press = () => {
-  layerDynamicItem.arrayPlayer[1].velocityX = 2;
+  layerDynamicItem.arrayPlayer[1].velocityX = 10;
   layerDynamicItem.arrayPlayer[1].velocityY = 0;
 };
 
@@ -88,7 +110,7 @@ right.release = () => {
 };
 
 left.press = () => {
-  layerDynamicItem.arrayPlayer[1].velocityX = -2;
+  layerDynamicItem.arrayPlayer[1].velocityX = -10;
   layerDynamicItem.arrayPlayer[1].velocityY = 0;
 };
 
@@ -100,7 +122,7 @@ left.release = () => {
 
 up.press = () => {
   layerDynamicItem.arrayPlayer[1].velocityX = 0;
-  layerDynamicItem.arrayPlayer[1].velocityY = -2;
+  layerDynamicItem.arrayPlayer[1].velocityY = -10;
 };
 
 up.release = () => {
@@ -111,7 +133,7 @@ up.release = () => {
 
 down.press = () => {
   layerDynamicItem.arrayPlayer[1].velocityX = 0;
-  layerDynamicItem.arrayPlayer[1].velocityY = 2;
+  layerDynamicItem.arrayPlayer[1].velocityY = 10;
 };
 
 down.release = () => {
@@ -120,16 +142,62 @@ down.release = () => {
   }
 };
 
+showBomb.press = () => {
+  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bombe-bien.png'));
+
+  bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
+  bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
+
+  stageGame.addChild(bomb);
+  destroyBomb(bomb);
+}
+
+
+function destroyBomb(bomb: any) {
+
+ 
+  setTimeout(function () { 
+  
+    var explosion = new PIXI.Sprite(PIXI.Texture.fromImage('flammetest.png'));
+  explosion.x = bomb.x +50;
+  explosion.y = bomb.y;
+  stageGame.addChild(explosion);
+  
+  bomb.destroy(); 
+  destroyExplosion(explosion);
+  }, 2000);
+
+  
+}
+
+
+function destroyExplosion(explosion:any){
+  setTimeout(function () {explosion.destroy() },100);
+}
 
 function animate() {
+
   requestAnimationFrame(animate);
   // var bunny = stage.getChildAt(0);
 
   layerDynamicItem.arrayPlayer[1].animate();
 
+  for (let x = 0; x < layerTile.arrayBlock.length; x++) {
+    for (let y = 0; y < layerTile.arrayBlock[x].length; y++) {
+      layerTile.arrayBlock[x][y];
+      bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite, layerTile.arrayBlock[x][y].sprite);
+    }
+  }
   renderer.render(stageGame);
   //renderer.render(stage);
 }
+
+
+
+
+
+
+
 
 /*
 function keyboardInput(event: KeyboardEvent) {
