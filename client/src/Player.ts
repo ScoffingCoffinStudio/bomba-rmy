@@ -5,7 +5,7 @@ export class Player {
     public velocityY: number;
    
     constructor(x: number, y: number) {
-        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('player.png'));
+        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('assets/player.png'));
         // this._sprite.position.x = x;
         // this._sprite.position.y = y;
         this._sprite.x = x;

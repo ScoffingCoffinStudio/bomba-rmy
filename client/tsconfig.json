@@ -10,7 +10,6 @@
     },
     "files": [
         "./node_modules/pixi-typescript/pixi.js.d.ts",
-        "./node_modules/typescript-pixi-game-template/typings/pixi-timer.d.ts",
         "./src/index.ts"
         
     ]

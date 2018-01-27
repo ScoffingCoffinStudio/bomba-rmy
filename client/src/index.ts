@@ -16,9 +16,27 @@ layerTile.load(stageGame);
 
 var layerDynamicItem = new LayerDynamicItem();
 layerDynamicItem.load(stageGame);
-layerDynamicItem.arrayPlayer[1].sprite.position.y = 300;
 
-animate();
+
+
+
+
+
+animateStart();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //LOAD KEYBOARD LISTENER 
 // faire un truc plus prore
@@ -118,7 +136,7 @@ down.release = () => {
 };
 
 showBomb.press = () => {
-  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('bomb.png'));
+  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bomb.png'));
 
   bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
   bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
@@ -128,13 +146,51 @@ showBomb.press = () => {
 }
 
 
+function contain(player:Player, container:any) {
 
-function animate() {
+  var collision = undefined;
 
-  requestAnimationFrame(animate);
-  // var bunny = stage.getChildAt(0);
+  //Left
+  if (player.sprite.x < container.x) {
+    player.sprite.x = container.x;
+    console.log("Gauche touché");
+    collision = "left";
+  }
+
+  //Top
+  if (player.sprite.y < container.y) {
+    player.sprite.y = container.y;
+    layerDynamicItem.arrayPlayer[1].velocityY -= 1;
+    console.log("Haut touché");
+    collision = "top";
+  }
+
+  //Right
+  if (player.sprite.x + player.sprite.width > container.width) {
+    player.sprite.x = container.width - player.sprite.width;
+    console.log("Droite touché");
+    collision = "right";
+  }
+
+  //Bottom
+  if (player.sprite.y + player.sprite.height > container.height) {
+    player.sprite.y = container.height - player.sprite.height;
+    console.log("Bas touché");
+    collision = "bottom";
+  }
+
+  //Return the `collision` value
+  return collision;
+};
+
+
+
+function animateStart() {
+  requestAnimationFrame(animateStart);
 
   layerDynamicItem.arrayPlayer[1].animate();
+
+  var hitWall = contain(layerDynamicItem.arrayPlayer[1], { x: 0, y: 0, width: 500, height: 500 });
 
   for (let x = 0; x < layerTile.arrayBlock.length; x++) {
     for (let y = 0; y < layerTile.arrayBlock[x].length; y++) {
@@ -143,7 +199,6 @@ function animate() {
     }
   }
   renderer.render(stageGame);
-  //renderer.render(stage);
 }
 
 
@@ -152,26 +207,3 @@ function animate() {
 
 
 
-
-/*
-function keyboardInput(event: KeyboardEvent) {
-  // PRESS LEFT ARROW OR 'A' KEY
-  if (event.keyCode == 37 || event.keyCode == 65) {
-    layerDynamicItem.arrayPlayer[1].sprite.x =  50;
-  }
-  // PRESS UP ARROW OR 'W' KEY
-  else if (event.keyCode == 38 || event.keyCode == 87) {
-    layerDynamicItem.arrayPlayer[1].sprite.y -= 10;
- 
-  }
-  // PRESS RIGHT ARROW OR 'D' KEY
-  else if (event.keyCode == 39 || event.keyCode == 68) {
-    layerDynamicItem.arrayPlayer[1].sprite.x += 10;
-    
-  }
-  // PRESS DOWN ARROW OR 'S' KEY
-  else if (event.keyCode == 40 || event.keyCode == 83) {
-    layerDynamicItem.arrayPlayer[1].sprite.y += 10;
-    
-  }
-}*/

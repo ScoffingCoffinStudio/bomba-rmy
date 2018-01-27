@@ -5,7 +5,7 @@ export class Block {
     private _material: Material;
 
     constructor(x: number, y: number) {
-        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('block.png'));
+        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('assets/block.png'));
         this._sprite.position.x = x;
         this._sprite.position.y = y;     
         this._material = Material.Destructible;

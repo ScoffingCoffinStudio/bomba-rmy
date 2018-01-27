@@ -4,7 +4,7 @@ import { Explosion } from "./Explosion";
 export class LayerDynamicItem {
 
     public arrayPlayer: Player[];
-    public arrayExplosion: Explosion[][];
+    public arrayExplosion: Explosion[];
 
 
     constructor() {
@@ -21,55 +21,53 @@ export class LayerDynamicItem {
 
     }
 
-
-    destroyBomb(stageLayer: PIXI.Container, bomb: any) {
-
-
+    destroyBomb(stageLayer: PIXI.Container, bomb: any): PIXI.Container {
         setTimeout(function () {
+            // this.arrayExplosion = [new Explosion(bomb.x + 50, bomb.y - 200, "vertical"), new Explosion(bomb.x + 50, bomb.y + 45, "vertical"), new Explosion(bomb.x - 190, bomb.y + 10, "horizontal"), new Explosion(bomb.x + 40, bomb.y + 10, "horizontal")];
 
-         
+            // for (let entry of this.arrayExplosion) {
+            //     stageLayer.addChild(entry.sprite);
+            // }
+            bomb.destroy();
 
-            for (let x = 0; x < 4; x++) {
-                this.arrayExplosion[x] = [];
-            for (let y = 0; y < 4; y++) {
-                
-                
-                switch (y) {
-                    case 0:
-                     //let explosion1 = new Explosion(bomb.x, bomb.y-200, "vertical");
-                   // this.arrayExplosion[x][y] = explosion1;
-                   // stageLayer.addChild(explosion1.sprite);
-                        break;
-                    // case 1:
-                    //  explosion = new Explosion(bomb.x, bomb.y+50, "vertical");
-                    // this.arrayExplosion[x][y] = explosion;
-                    // stageLayer.addChild(explosion.sprite);
-                    //     break;
-                    // case 2:
-                    // explosion = new Explosion(bomb.x-200, bomb.y, "horizontal");
-                    // this.arrayExplosion[x][y] = explosion;
-                    // stageLayer.addChild(explosion.sprite);
-                    //     break;
-                    // case 3:
-                    // explosion = new Explosion(bomb.x+50, bomb.y, "horizontal");
-                    // this.arrayExplosion[x][y] = explosion;
-                    // stageLayer.addChild(explosion.sprite);
-                    //     break;
-                    default:
-                        break;
+            // setTimeout(function () {
+            //     for (let entry of this.arrayExplosion) {          
+            //         entry.sprite.destroy();
+            //     }
+            // }, 100);
+
+            PIXI.loader
+                .add('assets/mc.json')
+                .load(setupExplosion)
+
+
+            function setupExplosion() {
+                var explosionTextures = [],
+                    i;
+                for (i = 0; i < 26; i++) {
+                    var texture = PIXI.Texture.fromFrame('Explosion_Sequence_A ' + (i + 1) + '.png');
+                    explosionTextures.push(texture);
+                }
+
+                for (i = 0; i < 50; i++) {
+                    // create an explosion AnimatedSprite
+                    var explosion = new PIXI.extras.AnimatedSprite(explosionTextures);
+
+                    explosion.x = Math.random() * stageLayer.width;
+                    explosion.y = Math.random() * stageLayer.height;
+                    explosion.anchor.set(0.5);
+                    explosion.rotation = Math.random() * Math.PI;
+                    explosion.scale.set(0.75 + Math.random() * 0.5);
+                    explosion.gotoAndPlay(Math.random() * 27);
+                    stageLayer.addChild(explosion);
                 }
             }
-        }
 
-
-
-            bomb.destroy();
-            // explosion.sprite.destroy()
-           // setTimeout(function () {for (let i = 0; i < 4; i++) {this.arrayExplosion[i].destroy;}}, 100);
 
         }, 2000);
 
-
+        
+        return stageLayer;
     }
 
 }
