@@ -1,11 +1,11 @@
 import { Material } from "./Material";
-export class Block {
+export class Bomb{
 
     private _sprite: PIXI.Sprite;
     private _material: Material;
 
     constructor(x: number, y: number) {
-        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('assets/block.png'));
+        this._sprite = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bomb.png'));
         this._sprite.position.x = x;
         this._sprite.position.y = y;     
         this._material = Material.Destructible;
@@ -28,5 +28,5 @@ export class Block {
     set material(materialSet: Material) {
         this._material = materialSet;
     }
-    //#endregion
+    //#endregion      
 }

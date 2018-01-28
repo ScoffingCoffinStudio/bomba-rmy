@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Player } from "./Player";
 import { Explosion } from "./Explosion";
+import { Bomb } from "./Bomb";
 export class LayerDynamicItem {
 
     public arrayPlayer: Player[];
@@ -28,7 +29,7 @@ export class LayerDynamicItem {
             // for (let entry of this.arrayExplosion) {
             //     stageLayer.addChild(entry.sprite);
             // }
-            bomb.destroy();
+            bomb.sprite.destroy();
 
             // setTimeout(function () {
             //     for (let entry of this.arrayExplosion) {          

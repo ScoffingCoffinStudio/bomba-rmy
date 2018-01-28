@@ -3,6 +3,7 @@ import { LayerTile } from "./LayerTile";
 import { LayerDynamicItem } from "./LayerDynamicItem";
 import { Player } from './Player';
 import { Bump } from './bump.js';
+import { Bomb } from './Bomb';
 
 var bump = new Bump(PIXI);
 
@@ -18,9 +19,11 @@ var layerDynamicItem = new LayerDynamicItem();
 layerDynamicItem.load(stageGame);
 
 
+//Tableau de bombe
 
 
-
+var arrayBomb : Bomb[];
+this.arrayBomb = [];
 
 animateStart();
 
@@ -136,12 +139,13 @@ down.release = () => {
 };
 
 showBomb.press = () => {
-  let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bomb.png'));
+  // let bomb = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bomb.png'));
+  let bomb = new Bomb(Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50,Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50);
+  // bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
+  // bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
 
-  bomb.x = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50;
-  bomb.y = Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50;
-
-  stageGame.addChild(bomb);
+  this.arrayBomb.push(bomb);
+  stageGame.addChild(bomb.sprite);
   layerDynamicItem.destroyBomb(stageGame, bomb);
 }
 
@@ -160,7 +164,6 @@ function contain(player:Player, container:any) {
   //Top
   if (player.sprite.y < container.y) {
     player.sprite.y = container.y;
-    layerDynamicItem.arrayPlayer[1].velocityY -= 1;
     console.log("Haut touché");
     collision = "top";
   }
@@ -199,6 +202,41 @@ function animateStart() {
       bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite, layerTile.arrayBlock[x][y].sprite);
     }
   }
+
+ 
+
+
+  for (let bomb of this.arrayBomb) {
+    if (Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50 == Math.floor(bomb.x / 50) * 50 && Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50 == Math.floor(bomb.y / 50) * 50) {
+      // if (!bomb.created) {
+      //  bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite, bomb.sprite);
+      // }
+    // } else {
+    //   if (bomb.created) {
+    //     bomb.created = false;
+    //   } else {
+    //     bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite.position, bomb.sprite);
+    //   }
+     }
+ }
+
+
+  // this.arrayBomb.forEach(function (bomb:any) {
+  //       if (Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.x / 50) * 50 == Math.floor(bomb / 50) * 50 && Math.floor(layerDynamicItem.arrayPlayer[1].sprite.position.y / 50) * 50 == Math.floor(bomb.y / 50) * 50) {
+  //         if (!bomb.created) {
+  //           bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite.position, bomb);
+  //         }
+  //       } else {
+  //         if (bomb.created) {
+  //           bomb.created = false;
+  //         } else {
+  //           bump.rectangleCollision(layerDynamicItem.arrayPlayer[1].sprite.position, bomb);
+  //         }
+  //       }
+  //     });
+
+
+
   renderer.render(stageGame);
 }
 
