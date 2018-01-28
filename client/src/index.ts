@@ -178,6 +178,7 @@ function contain(player:Player, container:any) {
     console.log("Bas touché");
     collision = "bottom";
   }
+  
 
   //Return the `collision` value
   return collision;
